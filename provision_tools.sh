@@ -17,6 +17,7 @@ export PATH="${HOME}/homebrew/bin:${PATH}"
 # Git, in particular, give us a more modern version than what ships with macOS.
 echo -e "\033[44;97m!¡!¡! CFPB Mac Setup !¡!¡! INSTALLING STANDARD BREW FORMULAE ¡!¡!¡\033[0m"
 echo "!¡!¡! (This will take a while. Stretch your legs.)"
+
 brew install git git-secrets pyenv pyenv-virtualenvwrapper
 
 
@@ -37,7 +38,12 @@ fi
 ## Install the version of Python that we use.
 export PY3_VER="3.6.9"
 echo -e "\033[44;97m!¡!¡! CFPB Mac Setup !¡!¡! INSTALLING PYTHON ${PY3_VER} ¡!¡!¡\033[0m"
-pyenv install ${PY3_VER}
+
+brew reinstall zlib bzip2
+
+CFLAGS="-I$(brew --prefix openssl)/include -I$(brew --prefix bzip2)/include -I$(brew --prefix readline)/include -I$(xcrun --show-sdk-path)/usr/include"
+LDFLAGS="-L$(brew --prefix openssl)/lib -L$(brew --prefix readline)/lib -L$(brew --prefix zlib)/lib -L$(brew --prefix bzip2)/lib"
+pyenv install --patch ${PY3_VER} < <(curl -sSL https://github.com/python/cpython/commit/8ea6353.patch\?full_index\=1)
 
 ## Set the global Python versions.
 echo -e "\033[44;97m!¡!¡! CFPB Mac Setup !¡!¡! SETTING GLOBAL PYTHON VERSION ¡!¡!¡\033[0m"
